@@ -8,9 +8,13 @@ while True:
     print("2. See Task")
     print("3. Mark Task as Done")
     print("4. Delete all task")
-    print("5. Exit")
+    print("5. Edit Task")
+    print("6. Exit")
 
-    choice = int(input("Enter your choice: "))
+    try:
+        choice = int(input("Enter your choices: "))
+    except ValueError:
+        print("Masukkan Nomor")
 
     #Add task
     if (choice == 1):
@@ -45,6 +49,8 @@ while True:
                         print(f"{index}. {str(line).strip()}")
         except FileNotFoundError:
             print("There is no task avalaible!")
+        except ValueError:
+            print("Choice salah")
 
     # Mark task
     elif (choice == 3):
@@ -89,8 +95,51 @@ while True:
         else:
             print("There is no task to be deleted")
 
-    #
+
     elif (choice == 5):
+        try:
+            with open("task.txt", "r") as f:
+                tasks = f.readlines()
+
+                if not tasks:
+                    raise FileNotFoundError("There is no  task Avalaible!")
+                else:
+                    print("\n==Your Task==")
+                    for index, line in enumerate(tasks, start=1):
+                        print(f"{index}. {str(line).strip()}")
+
+                    task_number = int(input("\n Enter number to edit: "))
+
+                    if (task_number < 1 or task_number > len(tasks)):
+                        print("Invalid Task number!")
+                    else:
+                        new_task = input("Enter your new task: ")
+
+                        if (new_task.strip() == ""):
+                            raise ValueError("Task cannot empty!")
+
+                        if (tasks[task_number - 1].startswith("[#]")):
+                            status = "[#]"
+                        else:
+                            status = "[ ]"
+
+                        time = datetime.datetime.now()
+                        formatted_time = time.strftime("%d-%m-%Y %H:%M:%S")
+
+                        tasks[task_number - 1] = (f"{status} [{formatted_time}] {new_task} \n")
+
+                        with open("task.txt", "w") as f:
+                            f.writelines(tasks)
+
+                        print("Task succesfully edited")
+        except FileNotFoundError as r:
+            print("Failed", r)
+        except ValueError as e:
+            print("Failed", e)
+
+
+    #Exit
+    elif (choice == 6):
         print("\n Thankyou for using this:)")
         break
 
